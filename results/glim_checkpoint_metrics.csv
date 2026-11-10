@@ -1,0 +1,8 @@
+metric,reference_protocol,unit,EEG,noise,unknown_prompt,better
+BLEU-1,eight_text_variants,score_0_100,26.01,18.18,22.11,higher
+BLEU-2,eight_text_variants,score_0_100,10.42,4.55,6.23,higher
+ROUGE-1_recall,original_reference,score_0_100,12.49,10.96,10.71,higher
+retrieval_top1,24_candidates,percent,8.02,3.62,5.66,higher
+retrieval_top5,24_candidates,percent,35.37,20.56,27.4,higher
+BLEU-1,original_reference,score_0_100,7.96,6.41,7.02,higher
+mean_sentence_WER,original_reference,percent,115.86,140.28,108.58,lower
