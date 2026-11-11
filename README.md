@@ -1,28 +1,26 @@
-# EEG-to-text evaluation
+# EEG-to-text
 
-**Status: active research; completed experiments and pending work are identified below.**
+**In progress**
 
-Reproduction and evaluation work asking how EEG-to-text performance changes when real EEG is replaced with noise. The focus is on separating evidence from neural input from the language patterns a pretrained decoder already knows.
+I'm studying how much EEG-to-text models rely on the EEG input and how much comes from the language model. I compare real EEG with random noise and look at both the scores and the sentences the models generate.
 
-This repository includes an adapted BART experiment notebook and a documented summary of a completed GLIM checkpoint evaluation. The original model architectures belong to the cited research authors.
+This repo includes a small BART experiment and results from my evaluation of the released GLIM model.
 
-## Included work
+## What's here
 
-| Component | Scope |
-| --- | --- |
-| BART EEG/noise notebook | A runnable, small-scale adaptation using word-level ZuCo features. Includes EEG/noise training, four train/test input combinations, and separately labeled free-generation and teacher-forced evaluation. |
-| GLIM results | Recorded evaluation of the authors' released checkpoint on 2,208 recordings, using real EEG, the author noise control, and an unknown-prompt ablation. |
-| Evaluation notes | Metric definitions, protocol differences, and limitations on interpreting EEG/noise gaps. |
+- [BART notebook](notebooks/01_bart_eeg_vs_noise.ipynb): train with EEG or noise, then test all four training/input combinations. It reports free-generation results separately from scores that use teacher forcing.
+- [GLIM results](docs/glim_results.md): an evaluation of the authors' saved checkpoint on 2,208 recordings, including EEG, noise, and an unknown-prompt comparison.
+- [GLIM metric table](results/glim_checkpoint_metrics.csv): the reported scores in CSV format.
 
-## Start with the BART notebook
+## Run the BART experiment
 
-Open [`notebooks/01_bart_eeg_vs_noise.ipynb`](notebooks/01_bart_eeg_vs_noise.ipynb) in Google Colab, select a GPU runtime, and run the cells in order. The notebook installs its pinned dependencies, retrieves pinned author code, and downloads public data from the original host.
+Open the notebook in Google Colab, choose a GPU runtime, and run the cells in order. It installs the required packages and downloads the author code and public ZuCo data.
 
-The default `pilot` uses one participant, two ZuCo 1.0 reading tasks, at most 256/32/64 train/development/test examples, and two epochs per training condition. It is a pipeline experiment, not a full paper reproduction. The `full_v1` preset still covers only the BART portion of the original study. The notebook contains no prefilled experiment scores.
+Start with `PRESET='pilot'`. It uses one participant, two ZuCo 1.0 tasks, up to 256 training, 32 development, and 64 test examples, and two epochs for each training condition. This is a small experiment to check the setup, not a full reproduction of the paper. The `full_v1` setting expands the data but still covers only BART.
 
-The pilot downloads approximately 1.51 GB of source EEG files plus BART-large weights. Two resumable best checkpoints can require roughly 7 GB, with additional temporary space during replacement. Review the notebook's storage settings before starting. Google Drive mounting is optional and handled in your own Colab session.
+The pilot downloads about 1.51 GB of EEG files plus BART-large weights. Saving training state for both models can take around 7 GB, with extra space needed while replacing checkpoints. Check the storage settings before starting. Saving to Google Drive is optional.
 
-## Recorded GLIM results
+## GLIM results
 
 | Metric | Real EEG | Author noise control |
 | --- | ---: | ---: |
@@ -31,22 +29,17 @@ The pilot downloads approximately 1.51 GB of source EEG files plus BART-large we
 | BLEU-1 against the original reference | 7.96 | 6.41 |
 | Mean sentence WER against the original reference | 115.86% | 140.28% |
 
-These values come from the completed evaluation report. BLEU uses a 0–100 scale. Retrieval is distinct from generating a correct sentence. This was evaluation of saved author weights, not a reproduction of GLIM's original training run.
+BLEU scores use a 0–100 scale. Retrieval measures whether the correct reference ranks first among 24 choices, which is different from generating that sentence. I evaluated the authors' trained checkpoint rather than retraining GLIM.
 
-See [the protocol and results](docs/glim_results.md) and [the transcribed metric table](results/glim_checkpoint_metrics.csv). The BART notebook does not run GLIM; the full GLIM execution package, raw EEG, checkpoints, and generated sample records are not included here.
+Real EEG performed better than noise on several metrics. One limitation is that the authors' noise control also changes the padding mask, so the comparison does not isolate the EEG waveform alone. The score difference also does not tell us what percentage of the information comes from EEG.
 
-## What the comparison supports
+The BART notebook uses different features and scoring methods. Its scores should not be compared directly with GLIM's multi-reference scores. The GLIM execution files, raw EEG, and model checkpoints are not included in this repo.
 
-Real EEG improved several scores for this GLIM checkpoint. However, the released noise control also replaces the padding mask, so the difference does not isolate waveform content alone. It is not a percentage of information attributable to EEG. The BART adaptation retains matching masks and uses different inputs and metrics; its scores must not be directly compared to GLIM's multi-reference scores.
+## References
 
-## Sources and attribution
+- [Evaluating EEG-to-text models through noise-based performance analysis](https://www.nature.com/articles/s41598-025-29587-x) and [the authors' code](https://github.com/khu-aims/EEG-To-Text).
+- [Original EEG-to-text preprocessing code](https://github.com/MikeWangWZHL/EEG-To-Text).
+- [GLIM paper](https://arxiv.org/abs/2505.17099) and [code](https://github.com/justin-xzliu/GLIM), evaluated at commit `e1f202cb793cfe7292fbc0072a4c26a7dd0660d9`.
+- [ZuCo data](https://osf.io/q3zws/).
 
-- [A.1: Evaluating EEG-to-text models through noise-based performance analysis](https://www.nature.com/articles/s41598-025-29587-x) and [author code](https://github.com/khu-aims/EEG-To-Text).
-- [Original EEG-to-text preprocessing reference](https://github.com/MikeWangWZHL/EEG-To-Text).
-- [GLIM paper](https://arxiv.org/abs/2505.17099) and [author code](https://github.com/justin-xzliu/GLIM), evaluated at commit `e1f202cb793cfe7292fbc0072a4c26a7dd0660d9`.
-- [ZuCo public data](https://osf.io/q3zws/).
-
-
-## Validation
-
-During portfolio preparation, notebook structure and code-cell syntax were checked.
+The models come from the cited authors. My work here focuses on running the experiments, comparing the inputs, and analyzing the results.
