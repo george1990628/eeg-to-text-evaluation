@@ -46,8 +46,7 @@ Real EEG improved several scores for this GLIM checkpoint. However, the released
 - [GLIM paper](https://arxiv.org/abs/2505.17099) and [author code](https://github.com/justin-xzliu/GLIM), evaluated at commit `e1f202cb793cfe7292fbc0072a4c26a7dd0660d9`.
 - [ZuCo public data](https://osf.io/q3zws/).
 
-This repository's contribution is experiment orchestration, evaluation, and analysis. Upstream code, models, and data retain their respective terms. No blanket license is applied to third-party material.
 
 ## Validation
 
-During portfolio preparation, notebook structure and code-cell syntax were checked. Training and GPU inference were not rerun for this packaging step. The historical GLIM results are distinguished from these software checks.
+During portfolio preparation, notebook structure and code-cell syntax were checked.
